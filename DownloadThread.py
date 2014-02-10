@@ -37,17 +37,15 @@ class DownloadThread(threading.Thread):
                 percent = 100
             logger.debug('percent: %.2f%%' % percent)
 
-        savedir = data.get('savedir') or os.path.join(os.path.expanduser('~'), 'Downloads')
-        if data.get('url') and data.get('savename'):
-            savename = data['savename'];
-            split_index = savename.find('_album_')
-            album_name = savename[split_index+len('_album_'):len(savename)].strip()
-            savename = savename[0:split_index]
-            savedir = os.path.join(savedir,album_name)
-            if not os.path.exists(savedir):
-                os.makedirs(savedir)
-            
-            st = os.path.join(savedir, savename);
+        savedir = os.path.expanduser(data.get('savedir'))
+        "".join(s for s in savedir if s.isalnum())
+        if not os.path.exists(savedir):
+            os.makedirs(savedir)
+
+        savename = data['savename']
+        "".join(s for s in savename if s.isalnum())
+        if data.get('url') and savename:
+            st = os.path.join(savedir, savename)
             urllib.urlretrieve(data['url'], st, scheduler)
             if(os.path.exists(st)):
                 return st
