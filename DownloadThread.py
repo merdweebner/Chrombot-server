@@ -39,7 +39,15 @@ class DownloadThread(threading.Thread):
 
         savedir = data.get('savedir') or os.path.join(os.path.expanduser('~'), 'Downloads')
         if data.get('url') and data.get('savename'):
-            st = os.path.join(savedir, data['savename'])
+            savename = data['savename'];
+            split_index = savename.find('_album_')
+            album_name = savename[split_index+len('_album_'):len(savename)].strip()
+            savename = savename[0:split_index]
+            savedir = os.path.join(savedir,album_name)
+            if not os.path.exists(savedir):
+                os.makedirs(savedir)
+            
+            st = os.path.join(savedir, savename);
             urllib.urlretrieve(data['url'], st, scheduler)
             if(os.path.exists(st)):
                 return st
