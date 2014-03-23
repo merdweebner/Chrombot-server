@@ -8,7 +8,7 @@ from socketio.server import SocketIOServer
 from SUtils import logger
 from datas import gData
 from TaskManager import gMan
-# import simplejson
+from UrlsManager import gUrls
 
 app = Flask(__name__)
 
@@ -20,6 +20,14 @@ class SuperNamespace(BaseNamespace):
         data['namespace'] = self
         # logger.info('[temp]'+simplejson.dumps(data))
         gData.downloadQueue.put(data)
+
+    def on_addHtml(self, data):
+        gUrls.add(data)
+
+    def on_getHtml(self, data):
+        val = gUrls.pop()
+        data.update(val)
+        self.emit('html', data)
    
 
 @app.route('/')
