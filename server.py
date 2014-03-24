@@ -22,6 +22,7 @@ class SuperNamespace(BaseNamespace):
         gData.downloadQueue.put(data)
 
     def on_addHtml(self, data):
+        print 'on_addHtml: '+data['url']
         gUrls.add(data)
 
     def on_getHtml(self, data):
