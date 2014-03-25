@@ -27,8 +27,12 @@ class SuperNamespace(BaseNamespace):
 
     def on_getHtml(self, data):
         val = gUrls.pop()
-        data.update(val)
+        if val:
+            data['htmlInfo'] = val
         self.emit('html', data)
+
+    def on_taskFinished(self):
+        logger.info('taskFinished!');
    
 
 @app.route('/')
