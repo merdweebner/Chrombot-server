@@ -9,12 +9,14 @@ from SUtils import logger
 from datas import gData
 from TaskManager import gMan
 from UrlsManager import gUrls
+import simplejson
 
 app = Flask(__name__)
 
 class SuperNamespace(BaseNamespace):
     def recv_connect(self):
         self.emit('connected')
+        self.__JSONData = [];
 
     def on_addFile(self, data):
         data['namespace'] = self
@@ -31,8 +33,27 @@ class SuperNamespace(BaseNamespace):
             data['htmlInfo'] = val
         self.emit('html', data)
 
+    def __writeJSONs(self):
+        if(len(self.__JSONData) == 0):
+            return
+        logger.info('writeJSONs!')
+        item = self.__JSONData[0]
+        with open(item['expectName'], 'w') as f:
+            fileJson = [x['data'] for x in self.__JSONData]
+            f.write(simplejson.dumps(fileJson))
+            f.flush()
+            self.__JSONData = []
+
+    def on_writeJSONs(self, obj):
+        logger.debug('on_writeJSONs')
+        self.__JSONData.append(obj)
+        if(len(self.__JSONData) >= 100):
+            self.__writeJSONs()
+
+
     def on_taskFinished(self):
         logger.info('taskFinished!');
+        self.__writeJSONs()
    
 
 @app.route('/')
