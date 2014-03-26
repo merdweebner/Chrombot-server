@@ -37,15 +37,19 @@ class SuperNamespace(BaseNamespace):
     def on_writeJSON(self, obj):
         logger.info('on_writeJSON')
 
-        fileName = os.path.join(obj['savedir'], obj['savename']) if obj.get('savedir') else obj['savename']
+        fileName = obj['savename']
+        if(obj.get('savedir')):
+            sdir = obj['savedir']
+            if not os.path.exists(sdir):
+                os.makedirs(sdir)
+            fileName = os.path.join(sdir, fileName) 
+
         with open(fileName, 'w') as fp:
             json.dump(obj['data'], fp, indent=4, ensure_ascii=False, encoding='utf-8')
             fp.flush()
 
     def on_taskFinished(self):
         logger.info('taskFinished!');
-        self.__writeJSONs()
-   
 
 @app.route('/')
 def onindex():
