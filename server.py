@@ -9,9 +9,11 @@ from SUtils import logger
 from datas import gData
 from TaskManager import gMan
 from UrlsManager import gUrls
-import simplejson
+import json,sys
 
 app = Flask(__name__)
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 class SuperNamespace(BaseNamespace):
     def recv_connect(self):
@@ -37,10 +39,11 @@ class SuperNamespace(BaseNamespace):
         if(len(self.__JSONData) == 0):
             return
         logger.info('writeJSONs!')
+
         item = self.__JSONData[0]
         with open(item['expectName'], 'w') as f:
             fileJson = [x['data'] for x in self.__JSONData]
-            f.write(simplejson.dumps(fileJson))
+            json.dump(fileJson, f, indent=4, ensure_ascii=False, encoding='utf-8')
             f.flush()
             self.__JSONData = []
 

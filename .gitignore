@@ -40,3 +40,6 @@ nosetests.xml
 
 # python development files
 *.pyc
+
+# txt
+*.txt
