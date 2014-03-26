@@ -9,7 +9,7 @@ from SUtils import logger
 from datas import gData
 from TaskManager import gMan
 from UrlsManager import gUrls
-import json,sys
+import json,sys,os
 
 app = Flask(__name__)
 reload(sys)
@@ -18,8 +18,7 @@ sys.setdefaultencoding('utf-8')
 class SuperNamespace(BaseNamespace):
     def recv_connect(self):
         self.emit('connected')
-        self.__JSONData = [];
-
+       
     def on_addFile(self, data):
         data['namespace'] = self
         # logger.info('[temp]'+simplejson.dumps(data))
@@ -35,24 +34,13 @@ class SuperNamespace(BaseNamespace):
             data['htmlInfo'] = val
         self.emit('html', data)
 
-    def __writeJSONs(self):
-        if(len(self.__JSONData) == 0):
-            return
-        logger.info('writeJSONs!')
+    def on_writeJSON(self, obj):
+        logger.info('on_writeJSON')
 
-        item = self.__JSONData[0]
-        with open(item['expectName'], 'w') as f:
-            fileJson = [x['data'] for x in self.__JSONData]
-            json.dump(fileJson, f, indent=4, ensure_ascii=False, encoding='utf-8')
-            f.flush()
-            self.__JSONData = []
-
-    def on_writeJSONs(self, obj):
-        logger.debug('on_writeJSONs')
-        self.__JSONData.append(obj)
-        if(len(self.__JSONData) >= 100):
-            self.__writeJSONs()
-
+        fileName = os.path.join(obj['savedir'], obj['savename']) if obj.get('savedir') else obj['savename']
+        with open(fileName, 'w') as fp:
+            json.dump(obj['data'], fp, indent=4, ensure_ascii=False, encoding='utf-8')
+            fp.flush()
 
     def on_taskFinished(self):
         logger.info('taskFinished!');
