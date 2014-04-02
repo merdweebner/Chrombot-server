@@ -1,0 +1,6 @@
+simplejson
+logging
+gevent-socketio
+flask
+requests
+upyun
