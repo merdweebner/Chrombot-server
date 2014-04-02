@@ -143,6 +143,23 @@ def GetFileContent(path):
     ff.close()
     return content
 
+def writeFile(savename, savedir, data, format="wb"):
+    fileName = savename
+    if(savedir):
+        savedir = os.path.expanduser(savedir)
+        if not os.path.exists(savedir):
+            os.makedirs(savedir)
+        fileName = os.path.join(savedir, fileName)
+
+    with open(fileName, format) as fp:
+        if(type(data) == 'dict'):
+            simplejson.dump(data, fp, indent=4, ensure_ascii=False, encoding='utf-8')
+        else:
+            fp.write(data)
+
+
+
+
 def ParseCookies(content):
     linenum = 0
     cookies = []

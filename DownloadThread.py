@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import threading, urllib, os
 from datas import gData
 from SUtils import logger

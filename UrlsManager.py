@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 class UrlsManager(object):
     """docstring for UrlsManager"""
     def __init__(self):

@@ -1,15 +1,19 @@
-# from gevent import monkey
-# monkey.patch_all()
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from gevent import monkey
+monkey.patch_all()
 from socketio.namespace import BaseNamespace
 from flask import Flask, Response, request
 from socketio import socketio_manage
 from socketio.server import SocketIOServer
 # from socketio.mixins import RoomsMixin, BroadcastMixin
-from SUtils import logger
-from datas import gData
+from SUtils import logger, writeFile
+# from datas import gData
 from TaskManager import gMan
 from UrlsManager import gUrls
-import json,sys,os
+from HttpUtil import HttpUtil
+import sys
 
 app = Flask(__name__)
 reload(sys)
@@ -22,7 +26,8 @@ class SuperNamespace(BaseNamespace):
     def on_addFile(self, data):
         data['namespace'] = self
         # logger.info('[temp]'+simplejson.dumps(data))
-        gData.downloadQueue.put(data)
+        # gData.downloadQueue.put(data)
+        HttpUtil.download(data)
 
     def on_addHtml(self, data):
         print 'on_addHtml: '+data['url']
@@ -36,17 +41,10 @@ class SuperNamespace(BaseNamespace):
 
     def on_writeJSON(self, obj):
         logger.info('on_writeJSON')
+        writeFile(obj['savename'], obj.get('savedir'), obj['data'], 'w')
 
-        fileName = obj['savename']
-        if(obj.get('savedir')):
-            sdir = obj['savedir']
-            if not os.path.exists(sdir):
-                os.makedirs(sdir)
-            fileName = os.path.join(sdir, fileName) 
-
-        with open(fileName, 'w') as fp:
-            json.dump(obj['data'], fp, indent=4, ensure_ascii=False, encoding='utf-8')
-            fp.flush()
+    def on_saveUpyun(self, obj):
+        pass
 
     def on_taskFinished(self):
         logger.info('taskFinished!');
