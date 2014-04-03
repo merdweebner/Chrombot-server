@@ -9,11 +9,11 @@ from socketio import socketio_manage
 from socketio.server import SocketIOServer
 # from socketio.mixins import RoomsMixin, BroadcastMixin
 from SUtils import logger, writeFile
-# from datas import gData
+from datas import gData
 from TaskManager import gMan
 from UrlsManager import gUrls
 from HttpUtil import HttpUtil
-import sys
+import sys, simplejson
 
 app = Flask(__name__)
 reload(sys)
@@ -25,9 +25,10 @@ class SuperNamespace(BaseNamespace):
        
     def on_addFile(self, data):
         data['namespace'] = self
-        # logger.info('[temp]'+simplejson.dumps(data))
-        # gData.downloadQueue.put(data)
-        HttpUtil.download(data)
+        logger.info('[temp]'+simplejson.dumps(data))
+        gData.downloadQueue.put(data)
+        # data['saveat'] = 'upyun'
+        # HttpUtil.download(data, self)
 
     def on_addHtml(self, data):
         print 'on_addHtml: '+data['url']
@@ -43,8 +44,15 @@ class SuperNamespace(BaseNamespace):
         logger.info('on_writeJSON')
         writeFile(obj['savename'], obj.get('savedir'), obj['data'], 'w')
 
-    def on_saveUpyun(self, obj):
-        pass
+    def on_downloadItems(self, obj):
+        for item in obj.get('downloadItems'):
+            if(item.get('savename') and item.get('url')):
+                ret = HttpUtil.download(item)
+                if ret and type(ret) == dict:
+                    item.update(ret)
+                else:
+                    logger.error('downloadItem error!')
+        self.emit('downloadItemsFinished', obj)
 
     def on_taskFinished(self):
         logger.info('taskFinished!');

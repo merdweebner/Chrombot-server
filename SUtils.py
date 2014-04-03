@@ -157,6 +157,7 @@ def writeFile(savename, savedir, data, format="wb"):
         else:
             fp.write(data)
 
+    return fileName
 
 
 
