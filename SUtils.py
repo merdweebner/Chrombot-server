@@ -63,12 +63,12 @@ def log_it(pos=('begin'), level=logging.DEBUG, logArgs=True, logReturnValue=True
             if postMsg:
                 text += ' | ' + postMsg
             if 'begin' in pos:
-                logger.log(level, ' *begin* ' + text)
+                logger.log(level, ' $$$begin$$$ ' + text)
             res = func(*args, **kwargs)
             if 'end' in pos:
                 if res and logReturnValue:
                     text += ' | **RETURN : ' + simplejson.dumps(res) + '**'
-                logger.log(level, ' *end* ' + text)
+                logger.log(level, ' $$$end$$$ ' + text)
             return res
         return __log
     return _log_it

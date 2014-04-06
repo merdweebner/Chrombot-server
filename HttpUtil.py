@@ -8,7 +8,6 @@ class HttpUtil():
     def __init__(self):
         pass
 
-    # [TODO] exception
     @staticmethod
     def download(obj):
         logger.debug('download url: '+obj['url'])
@@ -22,7 +21,11 @@ class HttpUtil():
                 'Cache-Control': 'max-age=0',
                 'Cookie': 'UTMPKEY=14367518; UTMPNUM=13792; UTMPUSERID=guest; LOGINTIME=1396536377'
             }
-            r = requests.get(obj['url'], headers=headers)
+            proxies = {
+                'http': 'http://127.0.0.1:8087', 
+                'https': 'https://127.0.0.1:8087'
+            }
+            r = requests.get(obj['url'], headers=headers, proxies=proxies)
             r.raise_for_status()    # 如果响应状态码不是 200，就主动抛出异常
         except Exception as e:
             logger.exception(e.message)

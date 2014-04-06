@@ -19,32 +19,49 @@ app = Flask(__name__)
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+def _log_it(func):
+    def __log(*args, **kwargs):
+        text = func.__name__ + ' '
+        print text
+
+        res = func(*args, **kwargs)
+        return res
+    return __log
+
 class SuperNamespace(BaseNamespace):
+
+    # @log_it(level=logging.INFO)
     def recv_connect(self):
         self.emit('connected')
        
+    # @log_it(level=logging.INFO)
     def on_addFile(self, data):
         data['namespace'] = self
-        logger.info('[temp]'+simplejson.dumps(data))
         gData.downloadQueue.put(data)
         # data['saveat'] = 'upyun'
         # HttpUtil.download(data, self)
 
+    # @log_it(level=logging.debug)
     def on_addHtml(self, data):
-        print 'on_addHtml: '+data['url']
+        logger.debug('addHtml: '+simplejson.dumps(data))
         gUrls.add(data)
 
+    # @log_it(level=logging.debug, logArgs=False)
     def on_getHtml(self, data):
+        logger.debug('getHtml')
         val = gUrls.pop()
         if val:
             data['htmlInfo'] = val
         self.emit('html', data)
 
+    # @log_it(level=logging.INFO, logArgs=False)
     def on_writeJSON(self, obj):
         logger.info('on_writeJSON')
         writeFile(obj['savename'], obj.get('savedir'), obj['data'], 'w')
 
+    # @log_it(pos=('begin', 'end'), level=logging.INFO, logArgs=False)
     def on_downloadItems(self, obj):
+        logger.info('on_downloadItems')
         for item in obj.get('downloadItems'):
             if(item.get('savename') and item.get('url')):
                 ret = HttpUtil.download(item)
@@ -53,6 +70,7 @@ class SuperNamespace(BaseNamespace):
                 else:
                     logger.error('downloadItem error!')
         self.emit('downloadItemsFinished', obj)
+        logger.info('on_downloadItems finished')
 
     def on_taskFinished(self):
         logger.info('taskFinished!');

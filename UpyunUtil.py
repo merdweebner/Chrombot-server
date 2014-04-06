@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import upyun, simplejson, os
-from SUtils import logger
+import upyun, simplejson, os, logging
+from SUtils import logger, log_it
 
 class UpyunUtil():
     up = None
-    _spaceName = 'revir' 
-    _userName = 'revir'
-    _userPasswd = 'qing2008'
+    _spaceName = 'xiaohua123' 
+    _userName = 'xiaohua123'
+    _userPasswd = 'xiaohua123'
     _rootDir = 'happiness'
-    _rootUrl = 'http://revir.b0.upaiyun.com/'
+    _rootUrl = 'http://xiaohua123.b0.upaiyun.com/'
 
-    # [TODO] exception
+    # @log_it(pos=('begin', 'end'), level=logging.INFO, logArgs=False)
     @staticmethod
     def uploadStream(content, obj):
         if not UpyunUtil.up:
