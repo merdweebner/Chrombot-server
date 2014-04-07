@@ -13,26 +13,30 @@ from datas import gData
 from TaskManager import gMan
 from UrlsManager import gUrls
 from HttpUtil import HttpUtil
-import sys, simplejson
+import sys, simplejson, time
 
 app = Flask(__name__)
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-def _log_it(func):
-    def __log(*args, **kwargs):
-        text = func.__name__ + ' '
-        print text
-
-        res = func(*args, **kwargs)
-        return res
-    return __log
-
 class SuperNamespace(BaseNamespace):
 
     # @log_it(level=logging.INFO)
     def recv_connect(self):
+        logger.info('client connected!');
         self.emit('connected')
+        self._chrombot_log_name = 'log/'+time.ctime()+'.log'
+        self._chrombot_log = open(self._chrombot_log_name, 'w')
+
+    def recv_disconnect(self):
+        logger.info('client disconnect!');
+        if(self._chrombot_log):
+            self._chrombot_log.close()
+            self._chrombot_log = None
+
+    def on_putLog(self, logData):
+        if(self._chrombot_log):
+            simplejson.dump(logData, self._chrombot_log, indent=4, ensure_ascii=False, encoding='utf-8')
        
     # @log_it(level=logging.INFO)
     def on_addFile(self, data):
@@ -48,7 +52,7 @@ class SuperNamespace(BaseNamespace):
 
     # @log_it(level=logging.debug, logArgs=False)
     def on_getHtml(self, data):
-        logger.debug('getHtml')
+        # logger.debug('getHtml')
         val = gUrls.pop()
         if val:
             data['htmlInfo'] = val

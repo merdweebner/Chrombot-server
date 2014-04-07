@@ -152,10 +152,8 @@ def writeFile(savename, savedir, data, format="wb"):
         fileName = os.path.join(savedir, fileName)
 
     with open(fileName, format) as fp:
-        if(type(data) == 'dict'):
+        if isinstance(data, (list, dict, str, unicode, int, float, bool, type(None))):
             simplejson.dump(data, fp, indent=4, ensure_ascii=False, encoding='utf-8')
-        else:
-            fp.write(data)
 
     return fileName
 
