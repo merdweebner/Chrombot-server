@@ -4,6 +4,7 @@
 import requests
 from SUtils import writeFile, logger
 from UpyunUtil import UpyunUtil
+from config import gConfig
 class HttpUtil():
     def __init__(self):
         pass
@@ -21,10 +22,9 @@ class HttpUtil():
                 'Cache-Control': 'max-age=0',
                 'Cookie': 'UTMPKEY=14367518; UTMPNUM=13792; UTMPUSERID=guest; LOGINTIME=1396536377'
             }
-            proxies = {
-                'http': 'http://127.0.0.1:8087', 
-                'https': 'https://127.0.0.1:8087'
-            }
+            proxies = None
+            if gConfig["downloadUsingProxy"]["enabled"]:
+                proxies = gConfig["downloadUsingProxy"]["proxies"]
             r = requests.get(obj['url'], headers=headers, proxies=proxies)
             r.raise_for_status()    # 如果响应状态码不是 200，就主动抛出异常
         except Exception as e:
