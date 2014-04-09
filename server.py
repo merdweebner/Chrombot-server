@@ -37,6 +37,7 @@ class SuperNamespace(BaseNamespace):
     def on_putLog(self, logData):
         if(self._chrombot_log):
             simplejson.dump(logData, self._chrombot_log, indent=4, ensure_ascii=False, encoding='utf-8')
+            self._chrombot_log.flush()
        
     # @log_it(level=logging.INFO)
     def on_addFile(self, data):
