@@ -4,7 +4,7 @@ import logging, os
 
 def InitLog():          
     #logging level: DEBUG<INFO<WARNING<ERROR<CRITICAL(FATAL)
-    logfile = 'log/safesite_super.log'
+    logfile = 'log/chrombot_server.log'
     dirname = os.path.dirname(logfile)
     if not os.path.exists(dirname):
         os.mkdir(dirname)

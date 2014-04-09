@@ -25,8 +25,11 @@ class HttpUtil():
             proxies = None
             if gConfig["downloadUsingProxy"]["enabled"]:
                 proxies = gConfig["downloadUsingProxy"]["proxies"]
-            r = requests.get(obj['url'], headers=headers, proxies=proxies)
+            r = requests.get(obj['url'], headers=headers, proxies=proxies, timeout=gConfig['downloadTimeout'])
             r.raise_for_status()    # 如果响应状态码不是 200，就主动抛出异常
+
+        except requests.Timeout as e:
+            logger.warning('download file timeout! file url: '+obj['url'])
         except Exception as e:
             logger.exception(e.message)
             # namespace.emit('downloadError', obj)

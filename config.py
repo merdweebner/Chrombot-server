@@ -8,5 +8,6 @@ gConfig = {
             'http': 'http://127.0.0.1:8087', 
             'https': 'https://127.0.0.1:8087'
         }
-    }
+    },
+    "downloadTimeout": 1   #download timeout, used by requests.get()
 }
