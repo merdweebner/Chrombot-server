@@ -40,14 +40,15 @@ class DownloadThread(threading.Thread):
                 percent = 100
             logger.debug('percent: %.2f%%' % percent)
 
-        savedir = os.path.expanduser(data.get('savedir')) or os.path.expanduser(data.get('savedir'))
+        savedir = os.path.expanduser(data.get('savedir')) or os.path.expanduser('~')
         if not os.path.exists(savedir):
             os.makedirs(savedir)
 
         savename = data.get('savename')
         if data.get('url') and savename:
             st = os.path.join(savedir, savename)
-            urllib.urlretrieve(data['url'], st, scheduler)
+            logger.info('download, url: '+data['url']+'  saveat: '+st)
+            urllib.urlretrieve(data['url'], st)
             if(os.path.exists(st)):
                 return st
 
